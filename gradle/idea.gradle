@@ -1,0 +1,95 @@
+apply plugin: 'idea'
+
+idea {
+    project {
+        languageLevel = '1.8'
+    
+        ipr.withXml { provider ->
+            def node = provider.asNode()
+
+    	    def settings = file('gradle/config/intellij-settings.xml')
+            def xmlSettings = new XmlParser().parse(settings)
+            xmlSettings.component.each { c -> node.append(c) }
+        }
+    }
+}
+
+// =======================
+// IDEA run configurations
+// =======================
+idea.workspace.iws.withXml { provider ->
+    def runManager = provider.node.component.find { it.@name == 'RunManager' }
+    if (runManager) {
+        // Create SpireApplication run configuration by default
+        def runConfigurationName = 'SpireApplication'
+        if (!runManager.find { it.@name == runConfigurationName }) {
+            runManager.attributes()['selected'] = "Application.$runConfigurationName"
+            runManager.appendNode('configuration', [default: 'false', name: runConfigurationName, type: 'Application', factoryName: 'Application'], [
+                new Node(null, 'extension', [name: 'coverage', enabled: 'false', merge: 'false', runner: 'idea']),
+                new Node(null, 'option', [name: 'MAIN_CLASS_NAME', value: 'com.palantir.spire.SpireApplication']),
+                new Node(null, 'option', [name: 'VM_PARAMETERS', value: '']),
+                new Node(null, 'option', [name: 'PROGRAM_PARAMETERS', value: 'server var/conf/spire.yml']),
+                new Node(null, 'option', [name: 'WORKING_DIRECTORY', value: 'file://$PROJECT_DIR$/dropwizard/spire-server/src/dev']),
+                new Node(null, 'option', [name: 'ALTERNATIVE_JRE_PATH_ENABLED', value: 'false']),
+                new Node(null, 'option', [name: 'ALTERNATIVE_JRE_PATH', value: '']),
+                new Node(null, 'option', [name: 'ENABLE_SWING_INSPECTOR', value: 'false']),
+                new Node(null, 'option', [name: 'ENV_VARIABLES']),
+                new Node(null, 'option', [name: 'PASS_PARENT_ENVS', value: 'true']),
+                new Node(null, 'module', [name: 'spire-server']),
+                new Node(null, 'envs'),
+                new Node(null, 'method')
+            ])
+        }
+
+        // Create DevSourceDataServer run configuration by default
+        def devSourceDataServerConfigurationName = 'DevSourceDataServer'
+        if (!runManager.find { it.@name == devSourceDataServerConfigurationName }) {
+            runManager.appendNode('configuration', [default: 'false', name: devSourceDataServerConfigurationName, type: 'Application', factoryName: 'Application'], [
+                    new Node(null, 'extension', [name: 'coverage', enabled: 'false', merge: 'false', runner: 'idea']),
+                    new Node(null, 'option', [name: 'MAIN_CLASS_NAME', value: 'com.palantir.acme.federated.source.DevSourceDataServer']),
+                    new Node(null, 'option', [name: 'VM_PARAMETERS', value: '']),
+                    new Node(null, 'option', [name: 'PROGRAM_PARAMETERS', value: 'server var/conf/spire.yml']),
+                    new Node(null, 'option', [name: 'WORKING_DIRECTORY', value: 'file://$MODULE_DIR$']),
+                    new Node(null, 'option', [name: 'ALTERNATIVE_JRE_PATH_ENABLED', value: 'false']),
+                    new Node(null, 'option', [name: 'ALTERNATIVE_JRE_PATH', value: '']),
+                    new Node(null, 'option', [name: 'ENABLE_SWING_INSPECTOR', value: 'false']),
+                    new Node(null, 'option', [name: 'ENV_VARIABLES']),
+                    new Node(null, 'option', [name: 'PASS_PARENT_ENVS', value: 'true']),
+                    new Node(null, 'module', [name: 'dev-source-data-service']),
+                    new Node(null, 'envs'),
+            ])
+        }
+
+        // If necessary, set up environment variables for docker-machine.
+        if (System.env.DOCKER_HOST != null) {
+            def junits = runManager.configuration.findAll { it.@type == 'JUnit' }
+            junits.each { junitConfig ->
+                def envs = junitConfig.envs.find { true }
+                changeOrAddEnv(envs, 'DOCKER_HOST', System.env.DOCKER_HOST)
+                changeOrAddEnv(envs, 'DOCKER_TLS_VERIFY', System.env.DOCKER_TLS_VERIFY)
+                changeOrAddEnv(envs, 'DOCKER_MACHINE_NAME', System.env.DOCKER_MACHINE_NAME)
+                changeOrAddEnv(envs, 'DOCKER_CERT_PATH', System.env.DOCKER_CERT_PATH)
+            }
+        }
+
+        // Set default working directory for tests to be module dir instead of project root
+        def defaultJunit = runManager.configuration.find { it.@type == 'JUnit' && it.@default == 'true' }
+        def workingDir = defaultJunit.option.find { it.@name == 'WORKING_DIRECTORY' }
+        workingDir.@value = '$MODULE_DIR$'
+    }
+
+    // Set compilation to be in parallel
+    def parallel = provider.node.appendNode('component', [name: 'CompilerWorkspaceConfiguration'])
+    parallel.appendNode('option', [name: 'PARALLEL_COMPILATION', value: 'true'])
+}
+
+def changeOrAddEnv(envs, name, value) {
+    def env = envs.env.find { it.@name == name }
+    if (env == null) {
+        envs.appendNode 'env', [name: name, value: value]
+    } else {
+        env.@value = value
+    }
+}
+
+//tasks.idea.dependsOn gofigureRender
