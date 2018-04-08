@@ -1,2 +1,3 @@
 appName: "NYC Food Blog"
 dataPath: data/
+users: ["Sonya", "Steve"]

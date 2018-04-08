@@ -22,9 +22,6 @@ public class Post {
     @JsonProperty private double cost;
     @JsonProperty private List<String> tags;
 
-    @JsonProperty private List<Review> reviews;
-
-
     public long getId() { return id; }
     public void setId(long id) { this.id = id; }
 
