@@ -1,15 +1,13 @@
 package com.nycfoodblog;
 
-import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import io.dropwizard.Application;
-import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
-import com.nycfoodblog.data.BlogPostManager;
-import com.nycfoodblog.resources.BlogPostResource;
+import com.nycfoodblog.data.PostManager;
+import com.nycfoodblog.resources.PostResource;
 
 public class FoodBlogApplication extends Application<FoodBlogConfiguration> {
 
@@ -28,11 +26,11 @@ public class FoodBlogApplication extends Application<FoodBlogConfiguration> {
     public void run(FoodBlogConfiguration configuration, Environment environment) {
 
         Path dataPath = Paths.get(configuration.getDataPath());
-        final BlogPostManager manager = new BlogPostManager(dataPath);
+        final PostManager manager = new PostManager(dataPath);
         environment.lifecycle().manage(manager);
-        environment.jersey().register(BlogPostManager.class);
+        environment.jersey().register(PostManager.class);
 
-        final BlogPostResource resource = new BlogPostResource(manager);
+        final PostResource resource = new PostResource(manager);
         environment.jersey().register(resource);
 
     }
