@@ -28,6 +28,7 @@ repositories {
 
 dependencies {
     compile group: 'io.dropwizard', name: 'dropwizard-core', version: dropwizardVersion
+    compile group: 'io.dropwizard', name: 'dropwizard-auth', version: dropwizardVersion
 
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }

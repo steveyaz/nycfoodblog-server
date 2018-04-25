@@ -1,3 +1,11 @@
+server:
+  applicationConnectors:
+  - type: http
+    port: 8090
+  adminConnectors:
+  - type: http
+    port: 8091
 appName: "NYC Food Blog"
 dataPath: data/
-users: ["Sonya", "Steve"]
+users: [ "Steve:mypassword", "Sonya:mypassword" ]
+
