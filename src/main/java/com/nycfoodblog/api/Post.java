@@ -13,7 +13,6 @@ public class Post {
     @JsonProperty private String restaurantName;
     @JsonProperty private Date dateVisited;
     @JsonProperty private String neighborhood;
-    @JsonProperty private String cuisineType;
     @JsonProperty private String addressStreet;
     @JsonProperty private String addressCity;
     @JsonProperty private String addressState;

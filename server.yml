@@ -7,5 +7,5 @@ server:
     port: 8091
 appName: "NYC Food Blog"
 dataPath: data/
-users: [ "Steve:mypassword", "Sonya:mypassword" ]
+users: [ "Steve:password", "Sonya:password" ]
 
