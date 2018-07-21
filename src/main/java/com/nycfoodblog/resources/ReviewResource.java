@@ -26,18 +26,17 @@ public class ReviewResource {
     }
 
     @GET
-    @Path("/{user}/{id}")
-    public Response getReview(@PathParam("user") String user, @PathParam("id") long id) {
-        Review review = manager.getReview(user, id);
+    @Path("/{username}/{postId}")
+    public Response getReview(@PathParam("username") String username, @PathParam("postId") long postId) {
+        Review review = manager.getReview(username, postId);
         if (review == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
+            return Response.ok().build();
         }
         return Response.ok(review).build();
     }
 
     @POST
     public Response putReview(Review review) {
-        System.out.println("putReview Resource");
         try {
             manager.putReview(review);
         } catch (Exception e) {

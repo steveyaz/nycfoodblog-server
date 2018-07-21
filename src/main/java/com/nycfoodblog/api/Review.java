@@ -1,23 +1,18 @@
 package com.nycfoodblog.api;
 
-import java.util.Date;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Review {
 
-    @JsonProperty private long id;
-    @JsonProperty private Date dateCreated;
+    @JsonProperty private String username;
+    @JsonProperty private long postId;
 
-    @JsonProperty private String user;
-    @JsonProperty private int overall;
+    @JsonProperty private int foodRating;
+    @JsonProperty private int vibesRating;
+    @JsonProperty private int ecRating;
+    @JsonProperty private String text;
 
-    public long getId() { return id; }
-    public void setId(long id) { this.id = id; }
-
-    public Date getDateCreated() { return dateCreated; }
-    public void setDateCreated(Date dateCreated) { this.dateCreated = dateCreated; }
-
-    public String getUser() { return user; }
+    public String getUsername() { return username; }
+    public long getPostId() { return postId; }
 
 }

@@ -11,6 +11,7 @@ import com.nycfoodblog.data.PostManager;
 import com.nycfoodblog.resources.AuthenticationResource;
 import com.nycfoodblog.resources.PostResource;
 import com.nycfoodblog.resources.ReviewResource;
+import com.nycfoodblog.resources.UserResource;
 
 import io.dropwizard.Application;
 import io.dropwizard.auth.AuthDynamicFeature;
@@ -44,6 +45,9 @@ public class FoodBlogApplication extends Application<FoodBlogConfiguration> {
 
         final ReviewResource reviewResource = new ReviewResource(manager);
         environment.jersey().register(reviewResource);
+
+        final UserResource userResource = new UserResource(manager);
+        environment.jersey().register(userResource);
 
         for (String userString : configuration.getUsers()) {
             users.add(new User(userString.split(":")[0], userString.split(":")[1]));
