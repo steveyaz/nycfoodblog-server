@@ -65,11 +65,11 @@ jobs:
       
       - run:
           name: Deploy new bin
-          command: scp -o StrictHostKeyChecking=no -r nycfoodblog-1.0.0/bin/* ec2-user@ec2-34-207-239-10.compute-1.amazonaws.com:~/nycfoodblog-1.0.0/bin/*
+          command: scp -o StrictHostKeyChecking=no -r nycfoodblog-1.0.0/bin/* ec2-user@ec2-34-207-239-10.compute-1.amazonaws.com:~/nycfoodblog-1.0.0/bin/
 
       - run:
           name: Deploy new lib
-          command: scp -o StrictHostKeyChecking=no -r nycfoodblog-1.0.0/lib/* ec2-user@ec2-34-207-239-10.compute-1.amazonaws.com:~/nycfoodblog-1.0.0/lib/*
+          command: scp -o StrictHostKeyChecking=no -r nycfoodblog-1.0.0/lib/* ec2-user@ec2-34-207-239-10.compute-1.amazonaws.com:~/nycfoodblog-1.0.0/lib/
 
       - run:
           name: Start service
