@@ -53,15 +53,15 @@ jobs:
 
       - run:
           name: Stop service
-          command: ssh -o StrictHostKeyChecking=no ec2-user@ec2-34-207-239-10.compute-1.amazonaws.com ~/nycfoodblog-1.0.0/stop.sh
+          command: ssh -o StrictHostKeyChecking=no ec2-user@ec2-34-207-239-10.compute-1.amazonaws.com /home/ec2-user/nycfoodblog-1.0.0/stop.sh
 
       - run:
           name: Delete old bin
-          command: ssh -o StrictHostKeyChecking=no ec2-user@ec2-34-207-239-10.compute-1.amazonaws.com rm -rf ~/nycfoodblog-1.0.0/bin/*
+          command: ssh -o StrictHostKeyChecking=no ec2-user@ec2-34-207-239-10.compute-1.amazonaws.com rm -rf /home/ec2-user/nycfoodblog-1.0.0/bin/*
       
       - run:
           name: Delete old lib
-          command: ssh -o StrictHostKeyChecking=no ec2-user@ec2-34-207-239-10.compute-1.amazonaws.com rm -rf ~/nycfoodblog-1.0.0/lib/*
+          command: ssh -o StrictHostKeyChecking=no ec2-user@ec2-34-207-239-10.compute-1.amazonaws.com rm -rf /home/ec2-user/nycfoodblog-1.0.0/lib/*
       
       - run:
           name: Deploy new bin
@@ -73,7 +73,7 @@ jobs:
 
       - run:
           name: Start service
-          command: ssh -o StrictHostKeyChecking=no ec2-user@ec2-34-207-239-10.compute-1.amazonaws.com ~/nycfoodblog-1.0.0/start.sh
+          command: ssh -o StrictHostKeyChecking=no ec2-user@ec2-34-207-239-10.compute-1.amazonaws.com /home/ec2-user/nycfoodblog-1.0.0/start.sh
 
 workflows:
   version: 2
