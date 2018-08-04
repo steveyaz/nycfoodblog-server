@@ -8,7 +8,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.codahale.metrics.annotation.Timed;
-import com.nycfoodblog.data.PostManager;
+import com.nycfoodblog.manager.PostManager;
 
 @Path("/user")
 @Produces(MediaType.APPLICATION_JSON)

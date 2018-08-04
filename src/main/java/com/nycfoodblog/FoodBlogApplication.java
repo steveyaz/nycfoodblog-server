@@ -7,7 +7,7 @@ import java.util.List;
 
 import com.nycfoodblog.auth.BasicAuthenticator;
 import com.nycfoodblog.auth.User;
-import com.nycfoodblog.data.PostManager;
+import com.nycfoodblog.manager.PostManager;
 import com.nycfoodblog.resources.AuthenticationResource;
 import com.nycfoodblog.resources.PostResource;
 import com.nycfoodblog.resources.ReviewResource;

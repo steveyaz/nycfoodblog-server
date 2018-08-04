@@ -11,7 +11,7 @@ import javax.ws.rs.core.Response;
 
 import com.codahale.metrics.annotation.Timed;
 import com.nycfoodblog.api.Post;
-import com.nycfoodblog.data.PostManager;
+import com.nycfoodblog.manager.PostManager;
 
 @Path("/post")
 @Produces(MediaType.APPLICATION_JSON)
