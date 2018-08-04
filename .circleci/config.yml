@@ -9,7 +9,7 @@ jobs:
 
     docker:
       # specify the version you desire here
-      - image: circleci/node:7.10
+      - image: circleci/openjdk:10-jdk
       
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
