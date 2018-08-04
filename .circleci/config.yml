@@ -9,7 +9,7 @@ jobs:
 
     docker:
       # specify the version you desire here
-      - image: circleci/openjdk:10-jdk
+      - image: circleci/openjdk:8-jdk-browsers
       
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -24,7 +24,7 @@ jobs:
 
       - run:
           name: Build
-          command: ./gradlew distZip
+          command: gradle distZip
 
       - save_cache:
           name: Cache build
@@ -34,7 +34,7 @@ jobs:
         
       - run:
           name: Test
-          command: ./gradlew test
+          command: gradle test
 
   deploy:
 
