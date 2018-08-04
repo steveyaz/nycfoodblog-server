@@ -49,3 +49,6 @@ ProxyPassReverse "/api" "http://localhost:8080"
 sudo service httpd restart
 
 Add HTTP and HTTPS inbound rules to AWS Security Group
+
+Auto-deploy via circleci
+https://circleci.com/docs/2.0/deployment-integrations/
