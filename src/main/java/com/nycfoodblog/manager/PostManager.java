@@ -119,10 +119,10 @@ public class PostManager implements Managed {
     }
 
     public synchronized long putPost(Post post) throws Exception {
-        long id = this.maxId + 1;
+        long id = post.getId() >= 0 ? post.getId() : this.maxId + 1;
         post.setId(id);
         post.setDateCreated(new Date());
-        this.maxId = id;
+        this.maxId = Math.max(this.maxId, id);
         postMap.put(id, post);
         ObjectMapper mapper = new ObjectMapper();
         Path newPostPath = Paths.get(postsPath.toString(), id + ".json");
