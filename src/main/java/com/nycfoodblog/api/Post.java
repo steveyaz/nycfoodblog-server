@@ -17,6 +17,7 @@ public class Post {
     @JsonProperty private String addressCity;
     @JsonProperty private String addressState;
     @JsonProperty private String addressZip;
+    @JsonProperty private String instagramUrl;
     @JsonProperty private List<String> order;
     @JsonProperty private double cost;
     @JsonProperty private List<String> tags;
