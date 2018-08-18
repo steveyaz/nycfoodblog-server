@@ -5,6 +5,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -27,24 +28,22 @@ import io.dropwizard.lifecycle.Managed;
 public class PostManager implements Managed {
 
     private final static String POSTS_DIR = "posts";
-    private final static String MEDIA_DIR = "media";
     private final static String REVIEWS_DIR = "reviews";
     private Path dataRootPath;
     private Path postsPath;
-    private Path mediaPath;
     private Map<String, Path> userReviewsPaths;
 
     private List<User> userNames;
     private ConcurrentMap<Long, Post> postMap;
-    private Map<String, ConcurrentMap<Long, Review>> userReviewMap;
+    private ConcurrentMap<Long, List<Review>> reviewMap;
     private long maxId;
 
     public PostManager(Path dataRootPath, List<User> users) {
         this.dataRootPath = dataRootPath;
         this.userNames = users;
-        postMap = new ConcurrentHashMap<Long, Post>();
         userReviewsPaths = new HashMap<String, Path>();
-        userReviewMap = new HashMap<String, ConcurrentMap<Long, Review>>();
+        postMap = new ConcurrentHashMap<Long, Post>();
+        reviewMap = new ConcurrentHashMap<Long, List<Review>>();
         maxId = 0;
     }
 
@@ -58,10 +57,6 @@ public class PostManager implements Managed {
         postsPath = Paths.get(dataRootPath.toString(), POSTS_DIR);
         if (!Files.exists(postsPath)) {
             Files.createDirectory(postsPath);
-        }
-        Path mediaPath = Paths.get(dataRootPath.toString(), MEDIA_DIR);
-        if (!Files.exists(mediaPath)) {
-            Files.createDirectory(mediaPath);
         }
         Path reviewsPath = Paths.get(dataRootPath.toString(), REVIEWS_DIR);
         if (!Files.exists(reviewsPath)) {
@@ -90,14 +85,13 @@ public class PostManager implements Managed {
 
         // load reviews from disk
         for (String user : userReviewsPaths.keySet()) {
-            userReviewMap.put(user, new ConcurrentHashMap<Long, Review>());
             DirectoryStream<Path> reviewsStream = Files.newDirectoryStream(userReviewsPaths.get(user), "*.json");
-            for (Path entry: reviewsStream){
+            for (Path entry : reviewsStream) {
                 Review review = mapper.readValue(entry.toFile(), Review.class);
-                if (userReviewMap.get(user).containsKey(review.getPostId())) {
-                    throw new Exception("Duplicate review id: " + review.getPostId());
+                if (!reviewMap.containsKey(review.getPostId())) {
+                    reviewMap.put(review.getPostId(), new ArrayList<Review>());
                 }
-                userReviewMap.get(user).put(review.getPostId(), review);
+                reviewMap.get(review.getPostId()).add(review);
             }
         }
 
@@ -130,14 +124,21 @@ public class PostManager implements Managed {
         return id;
     }
 
-    public Review getReview(String user, long id) {
-        if (!userReviewMap.containsKey(user)) { return null; }
-        return userReviewMap.get(user).getOrDefault(id, null);
+    public List<Review> getReviews(long id) {
+        return reviewMap.getOrDefault(id, new ArrayList<Review>());
     }
 
     public synchronized void putReview(Review review) throws Exception {
         String usernameKey = review.getUsername().toLowerCase();
-        userReviewMap.get(usernameKey).put(review.getPostId(), review);
+        List<Review> postReviews = reviewMap.get(review.getPostId());
+        List<Review> newPostReviews = new ArrayList<Review>();
+        for (Review oldReview : postReviews) {
+            if (!oldReview.getUsername().equalsIgnoreCase(usernameKey)) {
+                newPostReviews.add(oldReview);
+            }
+        }
+        newPostReviews.add(review);
+        reviewMap.put(review.getPostId(), newPostReviews);
         ObjectMapper mapper = new ObjectMapper();
         Path newReviewPath = Paths.get(userReviewsPaths.get(usernameKey).toString(), review.getPostId() + ".json");
         mapper.writeValue(newReviewPath.toFile(), review);

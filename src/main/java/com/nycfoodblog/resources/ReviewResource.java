@@ -1,5 +1,7 @@
 package com.nycfoodblog.resources;
 
+import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -26,13 +28,13 @@ public class ReviewResource {
     }
 
     @GET
-    @Path("/{username}/{postId}")
-    public Response getReview(@PathParam("username") String username, @PathParam("postId") long postId) {
-        Review review = manager.getReview(username, postId);
-        if (review == null) {
-            return Response.ok().build();
+    @Path("/{postId}")
+    public Response getReviews(@PathParam("postId") long postId) {
+        List<Review> reviews = manager.getReviews(postId);
+        if (reviews == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
         }
-        return Response.ok(review).build();
+        return Response.ok(reviews).build();
     }
 
     @POST
