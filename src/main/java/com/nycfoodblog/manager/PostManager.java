@@ -132,9 +132,11 @@ public class PostManager implements Managed {
         String usernameKey = review.getUsername().toLowerCase();
         List<Review> postReviews = reviewMap.get(review.getPostId());
         List<Review> newPostReviews = new ArrayList<Review>();
-        for (Review oldReview : postReviews) {
-            if (!oldReview.getUsername().equalsIgnoreCase(usernameKey)) {
-                newPostReviews.add(oldReview);
+        if (postReviews != null) {
+            for (Review oldReview : postReviews) {
+                if (!oldReview.getUsername().equalsIgnoreCase(usernameKey)) {
+                    newPostReviews.add(oldReview);
+                }
             }
         }
         newPostReviews.add(review);
