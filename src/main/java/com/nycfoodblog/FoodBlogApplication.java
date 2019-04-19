@@ -5,6 +5,10 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.FilterRegistration;
+
+import org.eclipse.jetty.servlets.CrossOriginFilter;
+
 import com.nycfoodblog.auth.BasicAuthenticator;
 import com.nycfoodblog.auth.User;
 import com.nycfoodblog.manager.PostManager;
@@ -33,6 +37,13 @@ public class FoodBlogApplication extends Application<FoodBlogConfiguration> {
 
     @Override
     public void run(FoodBlogConfiguration configuration, Environment environment) {
+
+        final FilterRegistration.Dynamic corsFilter = environment.servlets().addFilter("CORS", CrossOriginFilter.class);
+        corsFilter.setInitParameter(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER, "*");
+        corsFilter.setInitParameter(CrossOriginFilter.ALLOWED_ORIGINS_PARAM, "*");
+        corsFilter.setInitParameter(CrossOriginFilter.ALLOWED_HEADERS_PARAM, "X-Requested-With,Content-Type,Accept,Origin,Authorization");
+        corsFilter.setInitParameter(CrossOriginFilter.ALLOWED_METHODS_PARAM, "OPTIONS,GET,PUT,POST,DELETE,HEAD");
+        corsFilter.setInitParameter(CrossOriginFilter.ALLOW_CREDENTIALS_PARAM, "true");
 
         Path dataPath = Paths.get(configuration.getDataPath());
         List<User> users = new ArrayList<User>();

@@ -66,48 +66,6 @@ esac
 
 CLASSPATH=$APP_HOME/gradle/wrapper/gradle-wrapper.jar
 
-function bootstrap_jdk () {
-  local zulu_version="8.23.0.3"
-  local java_version="8.0.144"
-  local gradle_cache="${HOME}/.gradle/caches/"
-  local bootstrapped_java_home="${gradle_cache}nucleus/java/${java_version}/"
-  local bootstrap_artifacts_dir="${gradle_cache}nucleus/artifacts/"
-  mkdir -p "${bootstrap_artifacts_dir}"
-  
-  if [[ -f "${bootstrapped_java_home}/bin/java" ]]; then
-    echo "Bootstrapped java found at ${bootstrapped_java_home}bin/java"
-  else
-    mkdir -p ${bootstrapped_java_home}
-    # We only support OSX and linux currently.
-    if [[ "${darwin}" = true ]]; then
-      local jdk_name="zulu${zulu_version}-jdk${java_version}-macosx_x64"
-      local jdk_artifact="${jdk_name}.zip"
-    elif [ "${cygwin}" = true ] || [ "${msys}" = true ]; then
-      local jdk_name="zulu${zulu_version}-jdk${java_version}-win_x64"
-      local jdk_artifact="${jdk_name}.zip"
-    else
-      local jdk_name="zulu${zulu_version}-jdk${java_version}-linux_x64"
-      local jdk_artifact="${jdk_name}.tar.gz"
-    fi
-    local jdk_url="https://artifactory.palantir.build/artifactory/all-dist/${jdk_artifact}"
-    pushd "${bootstrap_artifacts_dir}"
-    if [[ ! -e "${jdk_artifact}" ]]; then
-      curl -O "${jdk_url}"
-    fi
-    popd
-    if [ "${cygwin}" = true ] || [ "${msys}" = true ]; then 
-        unzip "${bootstrap_artifacts_dir}/${jdk_artifact}" -d "${bootstrap_artifacts_dir}/"
-    else
-        tar -xzf "${bootstrap_artifacts_dir}/${jdk_artifact}" -C "${bootstrap_artifacts_dir}/"
-    fi
-    mv ${bootstrap_artifacts_dir}/${jdk_name}/* "${bootstrapped_java_home}/"
-    rmdir "${bootstrap_artifacts_dir}/${jdk_name}"
-  fi
-  JAVA_HOME="${bootstrapped_java_home}"
-}
-
-bootstrap_jdk
-
 # Determine the Java command to use to start the JVM.
 if [ -n "$JAVA_HOME" ] ; then
     if [ -x "$JAVA_HOME/jre/sh/java" ] ; then
