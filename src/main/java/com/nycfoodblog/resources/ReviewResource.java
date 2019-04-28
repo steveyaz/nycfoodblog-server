@@ -2,6 +2,7 @@ package com.nycfoodblog.resources;
 
 import java.util.List;
 
+import javax.annotation.security.PermitAll;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -38,6 +39,7 @@ public class ReviewResource {
     }
 
     @POST
+    @PermitAll
     public Response putReview(Review review) {
         try {
             manager.putReview(review);

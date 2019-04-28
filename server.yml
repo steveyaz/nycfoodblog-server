@@ -8,4 +8,5 @@ server:
 appName: "NYC Food Blog"
 dataPath: data/
 users: [ "Steve:password", "Sonya:password" ]
+googleApiKey: "AIzaSyBF04CX1d5vxtXJK5tqnzP4xKP_zk2yLdM"
 

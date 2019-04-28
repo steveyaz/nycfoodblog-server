@@ -1,5 +1,6 @@
 package com.nycfoodblog.resources;
 
+import javax.annotation.security.PermitAll;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -42,6 +43,7 @@ public class PostResource {
     }
 
     @POST
+    @PermitAll
     public Response putPost(Post post) {
         long id = 0;
         try {

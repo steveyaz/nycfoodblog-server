@@ -19,6 +19,9 @@ public class FoodBlogConfiguration extends Configuration {
     @NotEmpty
     private List<String> users;
 
+    @NotEmpty
+    private String googleApiKey;
+
     @JsonProperty
     public String getAppName() { return appName; }
 
@@ -27,5 +30,8 @@ public class FoodBlogConfiguration extends Configuration {
 
     @JsonProperty
     public List<String> getUsers() { return users; }
+
+    @JsonProperty
+    public String getGoogleApiKey() { return googleApiKey; }
 
 }

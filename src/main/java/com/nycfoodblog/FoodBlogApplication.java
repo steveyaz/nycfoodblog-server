@@ -15,6 +15,7 @@ import com.nycfoodblog.auth.BasicAuthenticator;
 import com.nycfoodblog.auth.User;
 import com.nycfoodblog.manager.PostManager;
 import com.nycfoodblog.resources.AuthenticationResource;
+import com.nycfoodblog.resources.GeocodeResource;
 import com.nycfoodblog.resources.PostResource;
 import com.nycfoodblog.resources.ReviewResource;
 import com.nycfoodblog.resources.UserResource;
@@ -63,6 +64,9 @@ public class FoodBlogApplication extends Application<FoodBlogConfiguration> {
 
         final UserResource userResource = new UserResource(manager);
         environment.jersey().register(userResource);
+
+        final GeocodeResource geocodeResource = new GeocodeResource(configuration.getGoogleApiKey());
+        environment.jersey().register(geocodeResource);
 
         for (String userString : configuration.getUsers()) {
             users.add(new User(userString.split(":")[0], userString.split(":")[1]));
