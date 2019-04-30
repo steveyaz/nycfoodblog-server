@@ -52,6 +52,9 @@ public class FoodBlogApplication extends Application<FoodBlogConfiguration> {
 
         Path dataPath = Paths.get(configuration.getDataPath());
         List<User> users = new ArrayList<User>();
+        for (String userString : configuration.getUsers()) {
+            users.add(new User(userString.split(":")[0].toLowerCase(), userString.split(":")[1]));
+        }
         final PostManager manager = new PostManager(dataPath, users);
         environment.lifecycle().manage(manager);
         environment.jersey().register(PostManager.class);
@@ -68,9 +71,6 @@ public class FoodBlogApplication extends Application<FoodBlogConfiguration> {
         final GeocodeResource geocodeResource = new GeocodeResource(configuration.getGoogleApiKey());
         environment.jersey().register(geocodeResource);
 
-        for (String userString : configuration.getUsers()) {
-            users.add(new User(userString.split(":")[0], userString.split(":")[1]));
-        }
         BasicAuthenticator authenticator = new BasicAuthenticator(users);
         environment.jersey().register(new AuthDynamicFeature(
                 new BasicCredentialAuthFilter.Builder<User>()
