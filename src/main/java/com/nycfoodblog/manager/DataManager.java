@@ -8,7 +8,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -99,21 +98,9 @@ public class DataManager implements Managed {
     }
 
     @Override
-    public void stop() throws Exception {
+    public void stop() { }
 
-    }
-
-    public List<Post> getAllPosts() {
-        List<Post> allPosts = new LinkedList<Post>();
-        for(Map.Entry<Long, Post> entry: postMap.entrySet()) {
-            allPosts.add(entry.getValue());
-        }
-        return allPosts;
-    }
-
-    public Post getPost(long id) {
-        return postMap.getOrDefault(id, null);
-    }
+    public Map<Long, Post> getAllPosts() { return postMap; }
 
     public synchronized long putPost(Post post) throws Exception {
         long id = post.getId() > 0 ? post.getId() : this.maxId + 1;
@@ -127,9 +114,7 @@ public class DataManager implements Managed {
         return id;
     }
 
-    public List<Review> getReviews(long id) {
-        return reviewMap.getOrDefault(id, new ArrayList());
-    }
+    public Map<Long, List<Review>> getAllReviews() { return reviewMap; }
 
     public synchronized void putReview(Review review) throws Exception {
         List<Review> postReviews = reviewMap.get(review.getPostId());
