@@ -34,13 +34,12 @@ public class PostResource {
     @POST
     @PermitAll
     public Response putPost(Post post) {
-        long id = 0;
         try {
-            id = manager.putPost(post);
+            long id = manager.putPost(post);
+            return Response.ok(id).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
-        return Response.ok(id).build();
     }
 
 }
