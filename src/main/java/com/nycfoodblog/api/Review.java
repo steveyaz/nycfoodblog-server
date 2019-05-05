@@ -12,7 +12,7 @@ public class Review {
     @JsonProperty private int ecRating;
     @JsonProperty private String text;
 
-    public String getUsername() { return username; }
+    public String getUsername() { return username.toLowerCase(); }
     public long getPostId() { return postId; }
 
 }

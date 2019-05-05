@@ -13,7 +13,7 @@ import org.eclipse.jetty.servlets.CrossOriginFilter;
 
 import com.nycfoodblog.auth.BasicAuthenticator;
 import com.nycfoodblog.auth.User;
-import com.nycfoodblog.manager.PostManager;
+import com.nycfoodblog.manager.DataManager;
 import com.nycfoodblog.resources.AuthenticationResource;
 import com.nycfoodblog.resources.GeocodeResource;
 import com.nycfoodblog.resources.PostResource;
@@ -53,11 +53,12 @@ public class FoodBlogApplication extends Application<FoodBlogConfiguration> {
         Path dataPath = Paths.get(configuration.getDataPath());
         List<User> users = new ArrayList<User>();
         for (String userString : configuration.getUsers()) {
-            users.add(new User(userString.split(":")[0].toLowerCase(), userString.split(":")[1]));
+            String[] splitUserString = userString.split(":");
+            users.add(new User(splitUserString[0], splitUserString[1]));
         }
-        final PostManager manager = new PostManager(dataPath, users);
+        final DataManager manager = new DataManager(dataPath, users);
         environment.lifecycle().manage(manager);
-        environment.jersey().register(PostManager.class);
+        environment.jersey().register(DataManager.class);
 
         final PostResource postResource = new PostResource(manager);
         environment.jersey().register(postResource);

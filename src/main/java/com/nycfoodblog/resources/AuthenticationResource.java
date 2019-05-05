@@ -31,12 +31,8 @@ public class AuthenticationResource {
 
     @POST
     public Response checkAuthentication(AuthCreds creds) {
-        try {
-            Optional<User> user = authenticator.authenticate(new BasicCredentials(creds.getUsername(), creds.getPassword()));
-            return Response.ok(user.isPresent()).build();
-        } catch (AuthenticationException e) {
-            return Response.serverError().build();
-        }
+        Optional<User> user = authenticator.authenticate(new BasicCredentials(creds.getUsername(), creds.getPassword()));
+        return Response.ok(user.isPresent()).build();
     }
 
 }

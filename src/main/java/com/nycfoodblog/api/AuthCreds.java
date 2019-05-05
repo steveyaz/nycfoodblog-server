@@ -7,7 +7,7 @@ public class AuthCreds {
     @JsonProperty private String username;
     @JsonProperty private String password;
 
-    public String getUsername() { return username; }
+    public String getUsername() { return username.toLowerCase(); }
     public String getPassword() { return password; }
 
 }

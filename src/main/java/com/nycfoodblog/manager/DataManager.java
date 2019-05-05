@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,7 +26,7 @@ import com.nycfoodblog.auth.User;
 import io.dropwizard.lifecycle.Managed;
 
 @Singleton
-public class PostManager implements Managed {
+public class DataManager implements Managed {
 
     private final static String POSTS_DIR = "posts";
     private final static String REVIEWS_DIR = "reviews";
@@ -33,14 +34,14 @@ public class PostManager implements Managed {
     private Path postsPath;
     private Map<String, Path> userReviewsPaths;
 
-    private List<User> userNames;
+    private List<User> users;
     private ConcurrentMap<Long, Post> postMap;
     private ConcurrentMap<Long, List<Review>> reviewMap;
     private long maxId;
 
-    public PostManager(Path dataRootPath, List<User> users) {
+    public DataManager(Path dataRootPath, List<User> users) {
         this.dataRootPath = dataRootPath;
-        this.userNames = users;
+        this.users = users;
         userReviewsPaths = new HashMap<String, Path>();
         postMap = new ConcurrentHashMap<Long, Post>();
         reviewMap = new ConcurrentHashMap<Long, List<Review>>();
@@ -62,12 +63,12 @@ public class PostManager implements Managed {
         if (!Files.exists(reviewsPath)) {
             Files.createDirectory(reviewsPath);
         }
-        for (User user : userNames) {
-            Path userReviewsPath = Paths.get(reviewsPath.toString(), user.getName().toLowerCase());
+        for (User user : users) {
+            Path userReviewsPath = Paths.get(reviewsPath.toString(), user.getUsername());
             if (!Files.exists(userReviewsPath)) {
                 Files.createDirectory(userReviewsPath);
             }
-            userReviewsPaths.put(user.getName().toLowerCase(), userReviewsPath);
+            userReviewsPaths.put(user.getUsername(), userReviewsPath);
         }
 
         // load posts from disk
@@ -102,10 +103,12 @@ public class PostManager implements Managed {
 
     }
 
-    public Long[] getAllPostIds() {
-        Long[] ids = new Long[postMap.size()];
-        postMap.keySet().toArray(ids);
-        return ids;
+    public List<Post> getAllPosts() {
+        List<Post> allPosts = new LinkedList<Post>();
+        for(Map.Entry<Long, Post> entry: postMap.entrySet()) {
+            allPosts.add(entry.getValue());
+        }
+        return allPosts;
     }
 
     public Post getPost(long id) {
@@ -125,16 +128,15 @@ public class PostManager implements Managed {
     }
 
     public List<Review> getReviews(long id) {
-        return reviewMap.getOrDefault(id, new ArrayList<Review>());
+        return reviewMap.getOrDefault(id, new ArrayList());
     }
 
     public synchronized void putReview(Review review) throws Exception {
-        String usernameKey = review.getUsername().toLowerCase();
         List<Review> postReviews = reviewMap.get(review.getPostId());
         List<Review> newPostReviews = new ArrayList<Review>();
         if (postReviews != null) {
             for (Review oldReview : postReviews) {
-                if (!oldReview.getUsername().equalsIgnoreCase(usernameKey)) {
+                if (!oldReview.getUsername().equals(review.getUsername())) {
                     newPostReviews.add(oldReview);
                 }
             }
@@ -142,12 +144,12 @@ public class PostManager implements Managed {
         newPostReviews.add(review);
         reviewMap.put(review.getPostId(), newPostReviews);
         ObjectMapper mapper = new ObjectMapper();
-        Path newReviewPath = Paths.get(userReviewsPaths.get(usernameKey).toString(), review.getPostId() + ".json");
+        Path newReviewPath = Paths.get(userReviewsPaths.get(review.getUsername()).toString(), review.getPostId() + ".json");
         mapper.writeValue(newReviewPath.toFile(), review);
     }
 
     public List<String> getAllUsernames() {
-        return this.userNames.stream().map(u -> u.getName() ).collect(Collectors.toList());
+        return this.users.stream().map(u -> u.getUsername() ).collect(Collectors.toList());
     }
 
 }

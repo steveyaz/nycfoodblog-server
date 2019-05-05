@@ -13,17 +13,18 @@ public class BasicAuthenticator implements Authenticator<BasicCredentials, User>
     private Map<String, User> userMap;
 
     public BasicAuthenticator(List<User> users) {
-        userMap = new HashMap<String, User>();
+        userMap = new HashMap();
         for (User user : users) {
-            userMap.put(user.getName().toLowerCase(), user);
+            userMap.put(user.getUsername(), user);
         }
     }
 
     @Override
-    public Optional<User> authenticate(BasicCredentials credentials) throws AuthenticationException {
-        if (userMap.containsKey(credentials.getUsername().toLowerCase()) &&
-                userMap.get(credentials.getUsername().toLowerCase()).getPassword().equals(credentials.getPassword())) {
-            return Optional.of(userMap.get(credentials.getUsername().toLowerCase()));
+    public Optional<User> authenticate(BasicCredentials credentials) {
+        String cleanUsernameCredential = credentials.getUsername().toLowerCase();
+        if (userMap.containsKey(cleanUsernameCredential) &&
+                userMap.get(cleanUsernameCredential).getPassword().equals(credentials.getPassword())) {
+            return Optional.of(userMap.get(cleanUsernameCredential));
         }
         return Optional.empty();
     }

@@ -14,7 +14,7 @@ import javax.ws.rs.core.Response;
 
 import com.codahale.metrics.annotation.Timed;
 import com.nycfoodblog.api.Review;
-import com.nycfoodblog.manager.PostManager;
+import com.nycfoodblog.manager.DataManager;
 
 @Path("/review")
 @Produces(MediaType.APPLICATION_JSON)
@@ -22,9 +22,9 @@ import com.nycfoodblog.manager.PostManager;
 @Timed
 public class ReviewResource {
 
-    private final PostManager manager;
+    private final DataManager manager;
 
-    public ReviewResource(PostManager manager) {
+    public ReviewResource(DataManager manager) {
         this.manager = manager;
     }
 

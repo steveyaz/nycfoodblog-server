@@ -3,16 +3,21 @@ package com.nycfoodblog.auth;
 import java.security.Principal;
 
 public class User implements Principal {
-    private final String name;
+    private final String username;
     private final String password;
 
-    public User(String name, String password) {
-        this.name = name;
+    public User(String username, String password) {
+        this.username = username.toLowerCase();
         this.password = password;
     }
 
+    @Override
     public String getName() {
-        return name;
+        return getUsername();
+    }
+
+    public String getUsername() {
+        return username;
     }
 
     public String getPassword() {
